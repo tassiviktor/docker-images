@@ -4,9 +4,9 @@ Several docker images for my projects. All of them are prepared for building wit
 ## alpine-multi-base
 Alpine 3.19 based image with:
 - Setting UTF-8 as default encoding
-- mimalloc2 - memory manager for improving performance of memory allocations
+- Adding mimalloc2 - memory manager for improving performance of memory allocations
 - Adding default user for running applications as non-root
-- AMD64 and ARM64 support (multi-platfrom image)
+- AMD64 and ARM64 support (multi-platform image)
 
 https://hub.docker.com/repository/docker/viktortassi/alpine-multi-base/general
 
