@@ -1,6 +1,5 @@
 # Docker images
 Several docker images for my projects. All of them are prepared for building with buildx.
-Run `./build.sh` on *nix based systems.
 
 ## alpine-multi-base
 Alpine 3.19 based image with:
