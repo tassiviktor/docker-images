@@ -19,6 +19,6 @@ Image, based on above, adding slim LTS JREs. See tags on the DockerHub page
 https://hub.docker.com/repository/docker/viktortassi/alpine-jre/general
 
 ## alpine-redis
-Image, based on **alpine-multi-slim**. Persistency disabled by default and started as non-root
+Image, based on **alpine-multi-slim**. Persistency disabled by default and will be started as non-root
 
 https://hub.docker.com/repository/docker/viktortassi/alpine-redis/general
