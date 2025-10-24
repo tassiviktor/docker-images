@@ -90,6 +90,7 @@ for ALPINE_VERSION in "${ALPINE_VERSIONS[@]}"; do
         -t "$TAG" \
         --build-arg "ALPINE_VERSION=${ALPINE_VERSION}" \
         --build-arg "JAVA_PACKAGE=${JAVA_PACKAGE}" \
+        --pull \
         $PUSH_MODE \
         .
     done

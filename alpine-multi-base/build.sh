@@ -109,6 +109,7 @@ for ALPINE_VERSION in "${VERSIONS[@]}"; do
     --sbom=true \
     "${TAGS[@]}" \
     --build-arg "ALPINE_VERSION=${ALPINE_VERSION}" \
+    --pull \
     $PUSH_MODE \
     .
 
