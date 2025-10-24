@@ -1,9 +1,22 @@
-FROM viktortassi/alpine-multi-base:3.19
+ARG ALPINE_VERSION=""
+FROM viktortassi/alpine-multi-base:$ALPINE_VERSION
 
-ARG JVER
+ARG ALPINE_VERSION
+ARG JAVA_PACKAGE
 
-RUN echo "https://apk.bell-sw.com/main" | tee -a /etc/apk/repositories
-RUN wget -P /etc/apk/keys/ https://apk.bell-sw.com/info@bell-sw.com-5fea454e.rsa.pub
-RUN apk add --no-cache bellsoft-java${JVER}-runtime
+USER root
+
+RUN apk update && apk upgrade --no-cache && \
+    apk --no-cache add $JAVA_PACKAGE && \
+    apk -v cache clean
+
+# --- JVM defaults for containers ---
+ENV JAVA_TOOL_OPTIONS="\
+  -XX:InitialRAMPercentage=40 \
+  -XX:MinRAMPercentage=40 \
+  -XX:MaxRAMPercentage=70 \
+  -XX:+UseStringDeduplication"
+
+USER default
 
 RUN java -version
