@@ -49,7 +49,7 @@ Examples:
 
 ---
 
-### ⚙️ Runtime Optimization (already included)
+### Runtime Optimization (already included)
 
 All Java images include tuned defaults for containerized environments:
 
@@ -70,7 +70,7 @@ ENV JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} -XX:ActiveProcessorCount=2"
 
 ---
 
-### 🧪 Local testing
+### Local testing
 
 Start an interactive shell:
 
@@ -84,7 +84,7 @@ Or test a Java image:
 docker run -it --rm viktortassi/alpine-java:3.21-17jre java -version
 ```
 
-### 📜 License
+### License
 
 All content and Dockerfiles are distributed under the MIT License unless otherwise noted.
 
