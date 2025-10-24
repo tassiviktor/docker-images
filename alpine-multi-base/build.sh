@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+BUILDER_NAME="multiarch"
+
 # Alpine versions to build
 VERSIONS=(3.19 3.20 3.21 3.22)
 JAVA_VERSIONS=(17 21 25)
@@ -26,6 +28,19 @@ if [[ $# -lt 1 ]]; then
   echo "  -n : dry run (build only, no push or increment)"
   exit 1
 fi
+
+# --- Buildx builder check ---
+BUILDER_NAME="${BUILDER_NAME:-multiarch}"
+
+if ! docker buildx inspect "$BUILDER_NAME" >/dev/null 2>&1; then
+  echo "[ERROR] Buildx builder '$BUILDER_NAME' not found."
+  echo "Please create it manually, e.g.:"
+  echo "  docker buildx create --name $BUILDER_NAME --driver docker-container --use"
+  exit 3
+fi
+
+docker buildx use "$BUILDER_NAME"
+echo "[INFO] Using buildx builder: $BUILDER_NAME"
 
 IMAGE_REPO="$1"
 BUILDNUM_DIR="${2:-.buildnums}"
@@ -110,6 +125,12 @@ for ALPINE_VERSION in "${VERSIONS[@]}"; do
     "${TAGS[@]}" \
     --build-arg "ALPINE_VERSION=${ALPINE_VERSION}" \
     --pull \
+    --label "org.opencontainers.image.title=Alpine multi base image" \
+    --label "org.opencontainers.image.description=Multiplatform Alpine base image with gcompat and mimalloc. TimeZone is UTC" \
+    --label "org.opencontainers.image.version=${ALPINE_VERSION}" \
+    --label "org.opencontainers.image.source=https://github.com/tassiviktor/docker-images" \
+    --label "org.opencontainers.image.licenses=Unlicense" \
+    --label "org.opencontainers.image.created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
     $PUSH_MODE \
     .
 

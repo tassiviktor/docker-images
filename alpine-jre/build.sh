@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+BUILDER_NAME="multiarch"
+
 # Alpine base versions
 ALPINE_VERSIONS=(3.19 3.20 3.21 3.22)
 
@@ -30,6 +32,19 @@ if [[ $# -lt 1 ]]; then
   echo "  -n : dry run (build only, no push)"
   exit 1
 fi
+
+# --- Buildx builder check ---
+BUILDER_NAME="${BUILDER_NAME:-multiarch}"
+
+if ! docker buildx inspect "$BUILDER_NAME" >/dev/null 2>&1; then
+  echo "[ERROR] Buildx builder '$BUILDER_NAME' not found."
+  echo "Please create it manually, e.g.:"
+  echo "  docker buildx create --name $BUILDER_NAME --driver docker-container --use"
+  exit 3
+fi
+
+docker buildx use "$BUILDER_NAME"
+echo "[INFO] Using buildx builder: $BUILDER_NAME"
 
 IMAGE_REPO="$1"
 
@@ -91,6 +106,13 @@ for ALPINE_VERSION in "${ALPINE_VERSIONS[@]}"; do
         --build-arg "ALPINE_VERSION=${ALPINE_VERSION}" \
         --build-arg "JAVA_PACKAGE=${JAVA_PACKAGE}" \
         --pull \
+        --label "org.opencontainers.image.title=Alpine Java Runtime" \
+        --label "org.opencontainers.image.description=Alpine Java Runtime for build and for run" \
+        --label "org.opencontainers.image.version=${ALPINE_VERSION}-${JV}${TAG_KIND}" \
+        --label "org.opencontainers.image.source=https://github.com/tassiviktor/docker-images" \
+        --label "org.opencontainers.image.created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+        --label "org.opencontainers.image.licenses=Unlicense" \
+        --label "org.opencontainers.image.base.name=viktortassi/alpine-multi-base:${ALPINE_VERSION}" \
         $PUSH_MODE \
         .
     done

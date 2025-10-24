@@ -21,4 +21,6 @@ ENV MIMALLOC_LARGE_OS_PAGES=1 LD_PRELOAD=/lib/libmimalloc.so
 RUN echo "UTC" > /etc/timezone
 RUN cp /usr/share/zoneinfo/UTC /etc/localtime
 
+RUN rm -rf /root/.cache /var/cache/apk/* /tmp/* /var/tmp/*
+
 USER default

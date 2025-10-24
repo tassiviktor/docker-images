@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+BUILDER_NAME="multiarch"
+
 PLATFORMS="linux/amd64,linux/arm64"
 DRY_RUN=false
 
@@ -19,6 +21,19 @@ if [[ $# -lt 1 ]]; then
   exit 1
 fi
 REPO="$1"
+
+# --- Buildx builder check ---
+BUILDER_NAME="${BUILDER_NAME:-multiarch}"
+
+if ! docker buildx inspect "$BUILDER_NAME" >/dev/null 2>&1; then
+  echo "[ERROR] Buildx builder '$BUILDER_NAME' not found."
+  echo "Please create it manually, e.g.:"
+  echo "  docker buildx create --name $BUILDER_NAME --driver docker-container --use"
+  exit 3
+fi
+
+docker buildx use "$BUILDER_NAME"
+echo "[INFO] Using buildx builder: $BUILDER_NAME"
 
 # --- Docker login ---
 : "${DOCKERHUB_USERNAME:?Set DOCKERHUB_USERNAME!}"
@@ -62,6 +77,13 @@ docker buildx build \
   "${ATTEST_FLAGS[@]}" \
   -t "$TAG" \
    --pull \
+   --label "org.opencontainers.image.title=Valkey server on Alpine" \
+   --label "org.opencontainers.image.description=Valkey server image based on Alpine with mimalloc2" \
+   --label "org.opencontainers.image.version=latest" \
+   --label "org.opencontainers.image.source=https://github.com/tassiviktor/docker-images" \
+   --label "org.opencontainers.image.created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" \
+   --label "org.opencontainers.image.licenses=Unlicense" \
+   --label "org.opencontainers.image.base.name=viktortassi/alpine-multi-base:latest" \
   $PUSH_MODE \
   .
 

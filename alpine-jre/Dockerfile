@@ -17,6 +17,8 @@ ENV JAVA_TOOL_OPTIONS="\
   -XX:MaxRAMPercentage=70 \
   -XX:+UseStringDeduplication"
 
+RUN rm -rf /root/.cache /var/cache/apk/* /tmp/* /var/tmp/*
+
 USER default
 
 RUN java -version
